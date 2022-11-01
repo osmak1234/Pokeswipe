@@ -26,22 +26,22 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Box width="60vw" m="auto" p="auto">
-        <Text fontSize="5xl" align="center">
+      <Box width='60vw' m='auto' p='auto'>
+        <Text fontSize='5xl' align='center'>
           Pokeswipe
         </Text>
-        <a href="http://localhost:3000/table">
+        <a href='http://localhost:3000/table'>
           <Button
-            bg="blue.600"
-            w="fit-content"
-            m="auto"
+            bg='blue.600'
+            w='fit-content'
+            m='auto'
             _hover={{ bg: "blue.900" }}
           >
-            <Text fontSize="2xl">Results</Text>
+            <Text fontSize='2xl'>Results</Text>
           </Button>
         </a>
-        <Image alt={pokemon} src={pokemonImage} w="20vw" />
-        <Button fontSize="2xl" onClick={nextPokemon}></Button>
+        <Image alt={pokemon} src={pokemonImage} w='20vw' />
+        <Button fontSize='2xl' onClick={nextPokemon}></Button>
       </Box>
     </>
   );

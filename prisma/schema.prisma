@@ -11,15 +11,10 @@ datasource db {
 }
 
 model pokemon {
-  pokedexId String @id
+  id        Int    @id @default(autoincrement())
+  pokedexId String
   name      String
   votes     Int
   weight    Int
   height    Int
-}
-
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
