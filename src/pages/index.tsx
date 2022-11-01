@@ -17,7 +17,7 @@ const Home: NextPage = () => {
     getData(randomId());
   }
   async function getData(id: number) {
-    fetch("http://localhost:3000/api/create", {
+    fetch("https://pokeswipe.vercel.app/api/create", {
       method: "GETONE",
       body: JSON.stringify({ id: id }),
     })
@@ -39,7 +39,7 @@ const Home: NextPage = () => {
         <Text fontSize='5xl' align='center'>
           Pokeswipe
         </Text>
-        <a href='http://localhost:3000/table'>
+        <a href='#/table'>
           <Button
             bg='blue.600'
             w='fit-content'

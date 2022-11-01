@@ -38,18 +38,18 @@ const Table = (pokemonData: any) => {
               />
             </Box>
             <Box p='10px' w='full' m='auto' textAlign='center'>
-              <Grid templateColumns='repeat(2, 1fr)' gap={6}>
-                <Text fontSize='2xl'>Name: </Text>
-                <Text fontSize='2xl'>{pokemon.name}</Text>
+              <Grid templateColumns='repeat(2, 1fr)' gap={1}>
+                <Text fontSize='xl'>Name: </Text>
+                <Text fontSize='xl'>{pokemon.name}</Text>
 
-                <Text fontSize='2xl'>Weight: </Text>
-                <Text fontSize='2xl'>{pokemon.weight}</Text>
+                <Text fontSize='xl'>Weight: </Text>
+                <Text fontSize='xl'>{pokemon.weight}</Text>
 
-                <Text fontSize='2xl'>Height: </Text>
-                <Text fontSize='2xl'>{pokemon.height}</Text>
+                <Text fontSize='xl'>Height: </Text>
+                <Text fontSize='xl'>{pokemon.height}</Text>
 
-                <Text fontSize='2xl'>Votes: </Text>
-                <Text fontSize='2xl' color='white'>
+                <Text fontSize='xl'>Votes: </Text>
+                <Text fontSize='xl' color='white'>
                   {pokemon.votes}
                 </Text>
               </Grid>
