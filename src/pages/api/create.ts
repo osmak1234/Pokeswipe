@@ -16,4 +16,12 @@ export default async function handler(
     const pokemons = await prisma.pokemon.findMany();
     res.json(pokemons);
   }
+  if (req.method == "GETONE") {
+    const reqData = JSON.parse(req.body);
+    console.log(reqData);
+    const pokemon = await prisma.pokemon.findUnique({
+      where: { id: reqData.id + 4 },
+    });
+    res.json(pokemon);
+  }
 }

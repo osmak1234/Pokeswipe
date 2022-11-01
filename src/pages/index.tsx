@@ -3,26 +3,35 @@ import type { NextPage } from "next";
 import { useState } from "react";
 
 const Home: NextPage = () => {
-  const [pokemon, setPokemon] = useState("Bulbasaur");
-  const [pokemonImage, setPokemonImage] = useState(
-    "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/151.png"
-  );
-  const nextPokemon = () => {
-    const randomPokemon = Math.floor(Math.random() * 151) + 1;
-    if (randomPokemon < 10) {
-      setPokemonImage(
-        `https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/00${randomPokemon}.png`
-      );
-    } else if (randomPokemon < 100 && randomPokemon > 9) {
-      setPokemonImage(
-        `https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/0${randomPokemon}.png`
-      );
-    } else {
-      setPokemonImage(
-        `https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/${randomPokemon}.png`
-      );
-    }
-  };
+  const [pokemonData, setPokemonData] = useState([
+    "bulbasaur",
+    60,
+    100,
+    0,
+    "001",
+  ]);
+  function randomId() {
+    return Math.floor(Math.random() * 151) + 1;
+  }
+  function randomPokemon() {
+    getData(randomId());
+  }
+  async function getData(id: number) {
+    fetch("http://localhost:3000/api/create", {
+      method: "GETONE",
+      body: JSON.stringify({ id: id }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setPokemonData([
+          data.name,
+          data.weight,
+          data.height,
+          data.votes,
+          data.pokedexId,
+        ]);
+      });
+  }
 
   return (
     <>
@@ -40,8 +49,12 @@ const Home: NextPage = () => {
             <Text fontSize='2xl'>Results</Text>
           </Button>
         </a>
-        <Image alt={pokemon} src={pokemonImage} w='20vw' />
-        <Button fontSize='2xl' onClick={nextPokemon}></Button>
+        <Image
+          alt={String(pokemonData[0])}
+          src={`https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/${pokemonData[4]}.png`}
+          w='20vw'
+        />
+        <Button fontSize='2xl' onClick={() => randomPokemon()}></Button>
       </Box>
     </>
   );
