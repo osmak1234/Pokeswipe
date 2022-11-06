@@ -1,60 +1,128 @@
-import { Box, Text, Button, Stack, Image } from "@chakra-ui/react";
-import type { NextPage } from "next";
-import { useState } from "react";
+import { Box, Text, Button, Image } from "@chakra-ui/react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { prisma } from "../server/db/client";
 
-const Home: NextPage = () => {
-  const [pokemonData, setPokemonData] = useState([
-    "bulbasaur",
-    60,
-    100,
-    0,
-    "001",
-  ]);
-  function randomId() {
-    return Math.floor(Math.random() * 151) + 1;
+export async function getServerSideProps() {
+  const randomId = Math.floor(Math.random() * 151) + 5;
+  const wantedPokemon = await prisma.pokemon.findUnique({
+    where: {
+      id: randomId,
+    },
+  });
+  return {
+    props: {
+      initialPokemon: wantedPokemon,
+    },
+  };
+}
+
+const Home = (props: {
+  initialPokemon: {
+    id: number;
+    name: string;
+    pokedexId: string;
+    weight: number;
+    height: number;
+    votes: number;
+  };
+}) => {
+  useEffect(() => {
+    setPokemonData(props.initialPokemon);
+  });
+
+  const [pokemonData, setPokemonData] = useState({
+    id: 5,
+    name: "bulbasaur",
+    pokedexId: "001",
+    weight: 10,
+    votes: 0,
+    height: 5,
+  });
+  const [pokemonId, setPokemonId] = useState(1);
+
+  async function sendVote(vote: boolean) {
+    await fetch("/api/sendVote", {
+      method: "POST",
+      body: JSON.stringify({
+        id: pokemonId + 5,
+        vote: vote,
+      }),
+    });
   }
-  function randomPokemon() {
-    getData(randomId());
-  }
-  async function getData(id: number) {
-    fetch("https://pokeswipe.vercel.app/api/create", {
-      method: "GETONE",
-      body: JSON.stringify({ id: id }),
+  async function getData() {
+    const randomId = Math.floor(Math.random() * 151) + 5;
+    interface PokemonId {
+      id: number;
+    }
+    const json: PokemonId = {
+      id: randomId,
+    };
+    console.log(json);
+    fetch("/api/handler", {
+      method: "POST",
+      body: JSON.stringify(json),
     })
       .then((res) => res.json())
       .then((data) => {
-        setPokemonData([
-          data.name,
-          data.weight,
-          data.height,
-          data.votes,
-          data.pokedexId,
-        ]);
+        setPokemonData({
+          id: data.id,
+          name: data.name,
+          height: data.height,
+          weight: data.weight,
+          votes: data.votes,
+          pokedexId: data.pokedexId,
+        });
+        setPokemonId(data.id);
+        console.log(pokemonData);
       });
   }
 
   return (
     <>
-      <Box width='60vw' m='auto' p='auto'>
-        <Text fontSize='5xl' align='center'>
-          Pokeswipe
-        </Text>
-        <a href='#/table'>
-          <Button
-            bg='blue.600'
-            w='fit-content'
-            m='auto'
-            _hover={{ bg: "blue.900" }}
-          >
+      <Box>
+        <Box
+          w='full'
+          h='5vh'
+          bg='red.800'
+          display='flex'
+          justifyContent='space-evenly'
+          alignItems='center'
+          flexDir={"row"}
+        >
+          <Text fontSize='2xl' align='center'>
+            Pokeswipe
+          </Text>
+          <Link href='/table'>
             <Text fontSize='2xl'>Results</Text>
-          </Button>
-        </a>
+          </Link>
+        </Box>
         <Image
-          alt={String(pokemonData[0])}
-          src={`https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/${pokemonData[4]}.png`}
-          w='20vw'
+          alt={String(pokemonData.name)}
+          src={`https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/${pokemonData.pokedexId}.png`}
+          w='full'
+          placeholder='../../public/images.png'
         />
-        <Button fontSize='2xl' onClick={() => randomPokemon()}></Button>
+        <Button
+          fontSize='2xl'
+          rounded='full'
+          onClick={async () => {
+            sendVote(false);
+            getData();
+          }}
+        >
+          ✖️
+        </Button>
+        <Button
+          fontSize='2xl'
+          rounded='full'
+          onClick={async () => {
+            sendVote(true);
+            getData();
+          }}
+        >
+          💓
+        </Button>
       </Box>
     </>
   );

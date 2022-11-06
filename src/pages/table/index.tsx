@@ -1,10 +1,13 @@
 import { Text, Box, Grid } from "@chakra-ui/react";
-import { useState } from "react";
 import { prisma } from "../../server/db/client";
 import Image from "next/image";
 
 export async function getServerSideProps() {
-  const pokemons = await prisma.pokemon.findMany();
+  const pokemons = await prisma.pokemon.findMany({
+    orderBy: {
+      votes: "desc",
+    },
+  });
   return {
     props: {
       pokemonData: pokemons,
@@ -13,13 +16,15 @@ export async function getServerSideProps() {
 }
 const Table = (pokemonData: any) => {
   return (
-    <Box maxW='610px' m='auto' pt='10px'>
+    <Box h='full' m='auto' pt='10px'>
       <Text fontSize='2xl' fontWeight='bold' textAlign='center' pb='10px'>
         These are the user results
       </Text>
       <Grid templateColumns='repeat(1, 1fr)' gap={6}>
         {pokemonData.pokemonData.map((pokemon: any) => (
           <Box
+            w='100%'
+            maxWidth={500}
             key={pokemon.id}
             display='flex'
             justifyContent='space-between'
@@ -27,12 +32,14 @@ const Table = (pokemonData: any) => {
             border='1px solid black'
             borderRadius='5px'
             borderColor='whiteAlpha.700'
+            p='10px'
+            m='auto'
             mb='10px'
           >
             <Box w='full' h='full'>
               <Image
-                width={300}
-                height={300}
+                width={200}
+                height={200}
                 alt={pokemon.name}
                 src={`https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/${pokemon.pokedexId}.png`}
               />
