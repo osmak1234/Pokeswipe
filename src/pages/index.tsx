@@ -99,8 +99,7 @@ const Home = (props: {
         </Box>
         <Image
           alt={String(pokemonData.name)}
-          src={`https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/${pokemonData.pokedexId}.png`}
-          w='full'
+          src={`/${pokemonData.pokedexId}.avif`}
           placeholder='../../public/images.png'
         />
         <Button

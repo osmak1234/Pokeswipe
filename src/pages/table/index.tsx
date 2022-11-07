@@ -1,4 +1,4 @@
-import { Text, Box, Grid } from "@chakra-ui/react";
+import { Text, Box, Grid, Button, useMediaQuery } from "@chakra-ui/react";
 import { prisma } from "../../server/db/client";
 import Image from "next/image";
 
@@ -15,14 +15,23 @@ export async function getServerSideProps() {
   };
 }
 const Table = (pokemonData: any) => {
+  const [isSmallerThan1000] = useMediaQuery("(max-width: 1000px)");
+
   return (
     <Box h='full' m='auto' pt='10px'>
       <Text fontSize='2xl' fontWeight='bold' textAlign='center' pb='10px'>
         These are the user results
       </Text>
-      <Grid templateColumns='repeat(1, 1fr)' gap={6}>
+
+      <Grid
+        templateColumns={
+          isSmallerThan1000 ? "repeat(1, 1fr)" : "repeat(3, 3fr)"
+        }
+        gap={6}
+      >
         {pokemonData.pokemonData.map((pokemon: any) => (
           <Box
+            maxW='300px'
             w='100%'
             maxWidth={500}
             key={pokemon.id}
@@ -41,7 +50,7 @@ const Table = (pokemonData: any) => {
                 width={200}
                 height={200}
                 alt={pokemon.name}
-                src={`https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/${pokemon.pokedexId}.png`}
+                src={`/${pokemon.pokedexId}.avif`}
               />
             </Box>
             <Box p='10px' w='full' m='auto' textAlign='center'>
