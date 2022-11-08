@@ -5,6 +5,7 @@ import { prisma } from "../server/db/client";
 
 export async function getServerSideProps() {
   const randomId = Math.floor(Math.random() * 151) + 5;
+
   const wantedPokemon = await prisma.pokemon.findUnique({
     where: {
       id: randomId,
@@ -29,7 +30,9 @@ const Home = (props: {
 }) => {
   useEffect(() => {
     setPokemonData(props.initialPokemon);
+    setImage(pokemonData.pokedexId);
   });
+  const [image, setImage] = useState("001")
 
   const [pokemonData, setPokemonData] = useState({
     id: 5,
@@ -74,6 +77,7 @@ const Home = (props: {
           pokedexId: data.pokedexId,
         });
         setPokemonId(data.id);
+        setImage(data.pokedexId);
         console.log(pokemonData);
       });
   }
