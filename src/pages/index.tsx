@@ -45,6 +45,7 @@ const Home = (props: {
   const [pokemonId, setPokemonId] = useState(1);
 
   async function sendVote(vote: boolean) {
+    console.log(pokemonData);
     await fetch("/api/sendVote", {
       method: "POST",
       body: JSON.stringify({
