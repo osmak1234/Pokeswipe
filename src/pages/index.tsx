@@ -103,7 +103,7 @@ const Home = (props: {
         </Box>
         <Image
           alt={String(pokemonData.name)}
-          src={`/${pokemonData.pokedexId}.avif`}
+          src={`/${image}.avif`}
           placeholder='../../public/images.png'
         />
         <Button
