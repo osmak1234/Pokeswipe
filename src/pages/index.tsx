@@ -58,6 +58,7 @@ const Home = (props: {
   const [image, setImage] = useState([1, 2, 3]);
 
   async function sendVote(vote: boolean) {
+    console.log(pokemonData);
     await fetch("/api/sendVote", {
       method: "POST",
       body: JSON.stringify({
