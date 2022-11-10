@@ -1,4 +1,4 @@
-import { Box, Text, Button } from "@chakra-ui/react";
+import { Box, Text, useMediaQuery } from "@chakra-ui/react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useAnimation, useDragControls } from "framer-motion";
@@ -56,7 +56,9 @@ const Home = (props: {
   });
   const [buttonEnabled, setButtonEnabled] = useState(false);
   const [image, setImage] = useState([1, 2, 3]);
+  const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  const [screenWidth] = useMediaQuery("(min-width: 1000px)");
   async function sendVote(vote: boolean) {
     console.log(pokemonData);
     await fetch("/api/sendVote", {
@@ -97,11 +99,22 @@ const Home = (props: {
       });
     setButtonEnabled(true);
     console.log(image);
+
+    await sleep(700);
+    animation.start({
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      rotate: 0,
+      transition: {
+        duration: 0.7,
+      },
+    });
   }
   const animation = useAnimation();
   const controls = useDragControls();
   function startDrag(event: any) {
-    controls.start(event, { snapToCursor: true });
+    controls.start(event);
   }
 
   return (
@@ -133,54 +146,36 @@ const Home = (props: {
             drag={true}
             dragConstraints={{
               top: 4,
-              left: -400,
-              right: 400,
+              left: 70,
+              right: 70,
               bottom: 4,
             }}
+            dragElastic={0.3}
             dragControls={controls}
-            dragElastic={0.1}
             onDragEnd={async (event, info) => {
-              if (info.point.x < 200) {
+              if (info.delta.x < -1) {
                 animation.start({
-                  rotate: 20,
+                  rotate: 60,
                   scale: 0.3,
-                  opacity: 0.1,
+                  opacity: 0,
                   transition: {
                     duration: 0.5,
                   },
                 });
                 sendVote(false);
                 getData();
-                animation.start({
-                  x: 0,
-                  scale: 1,
-                  rotate: 0,
-                  opacity: 1,
-                  transition: {
-                    duration: 0.7,
-                  },
-                });
                 console.log("left");
-              } else if (info.point.x > -200) {
+              } else if (info.delta.x > 1) {
                 animation.start({
-                  rotate: -20,
+                  rotate: -60,
                   scale: 0.3,
-                  opacity: 0.1,
+                  opacity: 0,
                   transition: {
                     duration: 0.5,
                   },
                 });
                 sendVote(true);
                 getData();
-                animation.start({
-                  x: 0,
-                  opacity: 1,
-                  scale: 1,
-                  rotate: 0,
-                  transition: {
-                    duration: 0.7,
-                  },
-                });
                 console.log("right");
               }
             }}
