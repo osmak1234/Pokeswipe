@@ -1,7 +1,7 @@
 import { Box, Text, Button } from "@chakra-ui/react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation, useDragControls } from "framer-motion";
 import { useEffect, useState } from "react";
 import { prisma } from "../server/db/client";
 
@@ -99,10 +99,14 @@ const Home = (props: {
     console.log(image);
   }
   const animation = useAnimation();
+  const controls = useDragControls();
+  function startDrag(event: any) {
+    controls.start(event, { snapToCursor: true });
+  }
 
   return (
     <>
-      <Box>
+      <Box p='20px'>
         <Box
           w='full'
           h='5vh'
@@ -124,9 +128,74 @@ const Home = (props: {
           justifyContent='space-evenly'
           flexDirection='column'
         >
-          <motion.div animate={animation}>
-            <Box maxW={600} p='50px' bg='blue.400' borderRadius='40px'>
+          <div onPointerDown={startDrag} />
+          <motion.div
+            drag={true}
+            dragConstraints={{
+              top: 4,
+              left: -400,
+              right: 400,
+              bottom: 4,
+            }}
+            dragControls={controls}
+            dragElastic={0.1}
+            onDragEnd={async (event, info) => {
+              if (info.point.x < 200) {
+                animation.start({
+                  rotate: 20,
+                  scale: 0.3,
+                  opacity: 0.1,
+                  transition: {
+                    duration: 0.5,
+                  },
+                });
+                sendVote(false);
+                getData();
+                animation.start({
+                  x: 0,
+                  scale: 1,
+                  rotate: 0,
+                  opacity: 1,
+                  transition: {
+                    duration: 0.7,
+                  },
+                });
+                console.log("left");
+              } else if (info.point.x > -200) {
+                animation.start({
+                  rotate: -20,
+                  scale: 0.3,
+                  opacity: 0.1,
+                  transition: {
+                    duration: 0.5,
+                  },
+                });
+                sendVote(true);
+                getData();
+                animation.start({
+                  x: 0,
+                  opacity: 1,
+                  scale: 1,
+                  rotate: 0,
+                  transition: {
+                    duration: 0.7,
+                  },
+                });
+                console.log("right");
+              }
+            }}
+            animate={animation}
+          >
+            <Box
+              maxH={600}
+              maxW={600}
+              pr='50px'
+              pl='50px'
+              bg='blue.400'
+              borderRadius='40px'
+            >
               <Image
+                className='image'
                 alt={String(pokemonData.name)}
                 src={`/${image[0]}.avif`}
                 layout='responsive'
@@ -145,93 +214,6 @@ const Home = (props: {
             </Box>
           </motion.div>
           <Box w='full' m='auto' display='flex' justifyContent='center'>
-            <Button
-              // dispable the button
-              isDisabled={!buttonEnabled}
-              bgGradient={"linear(to-l, blue.600, gray.600)"}
-              fontSize='2xl'
-              rounded='full'
-              mr='30px'
-              w='55px'
-              h='55px'
-              _hover={{
-                bgGradient: "linear(to-r, blue.300, gray.300)",
-                transform: "scale(1.1)",
-              }}
-              _active={{
-                bgGradient: "linear(to-l, blue.800, gray.800)",
-                transform: "scale(0.9)",
-              }}
-              onClick={async () => {
-                setButtonEnabled(true);
-                sendVote(true);
-                animation
-                  .start({
-                    x: -100,
-                    scale: 0.1,
-                    rotate: -20,
-                    transition: {
-                      duration: 0.7,
-                    },
-                  })
-                  .then(getData)
-                  .then(() => {
-                    animation.start({
-                      x: 0,
-                      scale: 1,
-                      rotate: 0,
-                      transition: {
-                        duration: 0.7,
-                      },
-                    });
-                  });
-              }}
-            >
-              🥱
-            </Button>
-            <Button
-              disabled={!buttonEnabled}
-              bgGradient='linear(to-r, red.700, pink.500)'
-              fontSize='2xl'
-              rounded='full'
-              ml='30px'
-              _hover={{
-                bgGradient: "linear(to-l, red.500, pink.300)",
-                transform: "scale(1.1)",
-              }}
-              _active={{
-                bgGradient: "linear(to-l, red.800, pink.800)",
-                transform: "scale(0.9)",
-              }}
-              w='55px'
-              h='55px'
-              onClick={async () => {
-                setButtonEnabled(true);
-                sendVote(true);
-                animation
-                  .start({
-                    x: 100,
-                    scale: 0.1,
-                    rotate: 20,
-                    transition: {
-                      duration: 0.7,
-                    },
-                  })
-                  .then(getData)
-                  .then(() => {
-                    animation.start({
-                      x: 0,
-                      scale: 1,
-                      rotate: 0,
-                      transition: {
-                        duration: 0.7,
-                      },
-                    });
-                  });
-              }}
-            >
-              😍
-            </Button>
             <Image
               width={0}
               height={0}

@@ -49,6 +49,8 @@ const Table = (pokemonData: any) => {
             <Box w='full' h='full'>
               <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>
                 <Image
+                  placeholder='blur'
+                  blurDataURL='pokemon'
                   width={200}
                   height={200}
                   alt={pokemon.name}
