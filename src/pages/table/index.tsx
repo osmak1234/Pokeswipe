@@ -1,6 +1,7 @@
 import { Text, Box, Grid, Button, useMediaQuery } from "@chakra-ui/react";
 import { prisma } from "../../server/db/client";
 import Image from "next/image";
+import { motion, useAnimation } from "framer-motion";
 
 export async function getServerSideProps() {
   const pokemons = await prisma.pokemon.findMany({
@@ -46,12 +47,14 @@ const Table = (pokemonData: any) => {
             mb='10px'
           >
             <Box w='full' h='full'>
-              <Image
-                width={200}
-                height={200}
-                alt={pokemon.name}
-                src={`/${pokemon.pokedexId}.avif`}
-              />
+              <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>
+                <Image
+                  width={200}
+                  height={200}
+                  alt={pokemon.name}
+                  src={`/${pokemon.pokedexId}.avif`}
+                />
+              </motion.div>
             </Box>
             <Box p='10px' w='full' m='auto' textAlign='center'>
               <Grid templateColumns='repeat(2, 1fr)' gap={1}>
@@ -59,10 +62,12 @@ const Table = (pokemonData: any) => {
                 <Text fontSize='xl'>{pokemon.name}</Text>
 
                 <Text fontSize='xl'>Weight: </Text>
-                <Text fontSize='xl'>{pokemon.weight}</Text>
+                <Text fontSize='xl'>{pokemon.weight / 10 + " kg"}</Text>
 
                 <Text fontSize='xl'>Height: </Text>
-                <Text fontSize='xl'>{pokemon.height}</Text>
+                <Text fontSize='xl'>
+                  {Math.round(pokemon.height * 8.6) + " cm"}
+                </Text>
 
                 <Text fontSize='xl'>Votes: </Text>
                 <Text fontSize='xl' color='white'>

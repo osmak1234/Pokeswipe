@@ -1,24 +1,37 @@
-import { Box, Text, Button, Image } from "@chakra-ui/react";
+import { Box, Text, Button } from "@chakra-ui/react";
 import Link from "next/link";
+import Image from "next/image";
+import { motion, useAnimation } from "framer-motion";
 import { useEffect, useState } from "react";
 import { prisma } from "../server/db/client";
 
 export async function getServerSideProps() {
-  const randomId = Math.floor(Math.random() * 151) + 5;
+  const random = Math.floor(Math.random() * 809) + 1;
+  function randomId() {
+    const Id: any = Math.floor(Math.random() * 809) + 1;
+    if (Id < 10) {
+      return `00${Id}`;
+    } else if (Id < 100) {
+      return `0${Id}`;
+    } else {
+      return String(Id);
+    }
+  }
+
+  const nextRandomId = [randomId(), randomId(), randomId()];
+
   const wantedPokemon = await prisma.pokemon.findUnique({
     where: {
-      id: randomId,
+      id: random,
     },
   });
   return {
-    props: {
-      initialPokemon: wantedPokemon,
-    },
+    props: { wantedPokemon, nextRandomId },
   };
 }
 
 const Home = (props: {
-  initialPokemon: {
+  wantedPokemon: {
     id: number;
     name: string;
     pokedexId: string;
@@ -26,57 +39,65 @@ const Home = (props: {
     height: number;
     votes: number;
   };
+  nextRandomId: number[];
 }) => {
   useEffect(() => {
-    setPokemonData(props.initialPokemon);
-  });
-
+    setPokemonData(props.wantedPokemon);
+    setImage(props.nextRandomId);
+    setButtonEnabled(true);
+  }, [props]);
   const [pokemonData, setPokemonData] = useState({
-    id: 5,
-    name: "bulbasaur",
+    id: 1,
+    name: "Balbasaus",
     pokedexId: "001",
-    weight: 10,
+    weight: 0,
+    height: 0,
     votes: 0,
-    height: 5,
   });
-  const [pokemonId, setPokemonId] = useState(1);
+  const [buttonEnabled, setButtonEnabled] = useState(false);
+  const [image, setImage] = useState([1, 2, 3]);
 
   async function sendVote(vote: boolean) {
     await fetch("/api/sendVote", {
       method: "POST",
       body: JSON.stringify({
-        id: pokemonId + 5,
+        id: pokemonData.id,
         vote: vote,
       }),
     });
   }
   async function getData() {
-    const randomId = Math.floor(Math.random() * 151) + 5;
+    function randomId() {
+      const Id: number = Math.floor(Math.random() * 809) + 1;
+      if (Id < 10) {
+        return `00${Id}`;
+      } else if (Id < 100) {
+        return `0${Id}`;
+      } else {
+        return String(Id);
+      }
+    }
+    const nextRandomId: any = [image[1], image[2], randomId()];
+    setImage(nextRandomId);
+    // add a random number to the end of the array and remove the first one
     interface PokemonId {
       id: number;
     }
     const json: PokemonId = {
-      id: randomId,
+      id: parseInt(nextRandomId[0]),
     };
-    console.log(json);
     fetch("/api/handler", {
       method: "POST",
       body: JSON.stringify(json),
     })
       .then((res) => res.json())
-      .then((data) => {
-        setPokemonData({
-          id: data.id,
-          name: data.name,
-          height: data.height,
-          weight: data.weight,
-          votes: data.votes,
-          pokedexId: data.pokedexId,
-        });
-        setPokemonId(data.id);
-        console.log(pokemonData);
+      .then((res) => {
+        setPokemonData(res);
       });
+    setButtonEnabled(true);
+    console.log(image);
   }
+  const animation = useAnimation();
 
   return (
     <>
@@ -84,7 +105,6 @@ const Home = (props: {
         <Box
           w='full'
           h='5vh'
-          bg='red.800'
           display='flex'
           justifyContent='space-evenly'
           alignItems='center'
@@ -93,35 +113,144 @@ const Home = (props: {
           <Text fontSize='2xl' align='center'>
             Pokeswipe
           </Text>
-          <Link href='/table'>
-            <Text fontSize='2xl'>Results</Text>
-          </Link>
         </Box>
-        <Image
-          alt={String(pokemonData.name)}
-          src={`/${pokemonData.pokedexId}.avif`}
-          placeholder='../../public/images.png'
-        />
-        <Button
-          fontSize='2xl'
-          rounded='full'
-          onClick={async () => {
-            sendVote(false);
-            getData();
-          }}
+        <Box
+          maxW={600}
+          m='auto'
+          display='flex'
+          maxH='60vh'
+          mt='20vh'
+          justifyContent='space-evenly'
+          flexDirection='column'
         >
-          ✖️
-        </Button>
-        <Button
-          fontSize='2xl'
-          rounded='full'
-          onClick={async () => {
-            sendVote(true);
-            getData();
-          }}
-        >
-          💓
-        </Button>
+          <motion.div animate={animation}>
+            <Box maxW={600} p='50px' bg='blue.400' borderRadius='40px'>
+              <Image
+                alt={String(pokemonData.name)}
+                src={`/${image[0]}.avif`}
+                layout='responsive'
+                width={200}
+                height={200}
+              />
+              <Text fontSize='2xl' align='center'>
+                {pokemonData.name}
+              </Text>
+              <Text fontSize='xl' align='center'>
+                {Math.round(pokemonData.weight / 10)}kg
+              </Text>
+              <Text fontSize='xl' align='center'>
+                {Math.round(pokemonData.height * 8.6)} cm
+              </Text>
+            </Box>
+          </motion.div>
+          <Box w='full' m='auto' display='flex' justifyContent='center'>
+            <Button
+              // dispable the button
+              isDisabled={!buttonEnabled}
+              bgGradient={"linear(to-l, blue.600, gray.600)"}
+              fontSize='2xl'
+              rounded='full'
+              mr='30px'
+              w='55px'
+              h='55px'
+              _hover={{
+                bgGradient: "linear(to-r, blue.300, gray.300)",
+                transform: "scale(1.1)",
+              }}
+              _active={{
+                bgGradient: "linear(to-l, blue.800, gray.800)",
+                transform: "scale(0.9)",
+              }}
+              onClick={async () => {
+                setButtonEnabled(true);
+                sendVote(true);
+                animation
+                  .start({
+                    x: -100,
+                    scale: 0.1,
+                    rotate: -20,
+                    transition: {
+                      duration: 0.7,
+                    },
+                  })
+                  .then(getData)
+                  .then(() => {
+                    animation.start({
+                      x: 0,
+                      scale: 1,
+                      rotate: 0,
+                      transition: {
+                        duration: 0.7,
+                      },
+                    });
+                  });
+              }}
+            >
+              🥱
+            </Button>
+            <Button
+              disabled={!buttonEnabled}
+              bgGradient='linear(to-r, red.700, pink.500)'
+              fontSize='2xl'
+              rounded='full'
+              ml='30px'
+              _hover={{
+                bgGradient: "linear(to-l, red.500, pink.300)",
+                transform: "scale(1.1)",
+              }}
+              _active={{
+                bgGradient: "linear(to-l, red.800, pink.800)",
+                transform: "scale(0.9)",
+              }}
+              w='55px'
+              h='55px'
+              onClick={async () => {
+                setButtonEnabled(true);
+                sendVote(true);
+                animation
+                  .start({
+                    x: 100,
+                    scale: 0.1,
+                    rotate: 20,
+                    transition: {
+                      duration: 0.7,
+                    },
+                  })
+                  .then(getData)
+                  .then(() => {
+                    animation.start({
+                      x: 0,
+                      scale: 1,
+                      rotate: 0,
+                      transition: {
+                        duration: 0.7,
+                      },
+                    });
+                  });
+              }}
+            >
+              😍
+            </Button>
+            <Image
+              width={0}
+              height={0}
+              alt='pokemon'
+              src={`/${image[0]}.avif`}
+            />
+            <Image
+              width={0}
+              height={0}
+              alt='pokemon'
+              src={`/${image[1]}.avif`}
+            />
+            <Image
+              width={0}
+              height={0}
+              alt='pokemon'
+              src={`/${image[2]}.avif`}
+            />
+          </Box>
+        </Box>
       </Box>
     </>
   );
