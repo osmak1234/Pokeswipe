@@ -98,9 +98,8 @@ const Home = (props: {
         setPokemonData(res);
       });
     console.log(image);
-
-    setImage(nextRandomId);
     await sleep(700);
+    setImage(nextRandomId);
     animation.start({
       x: 0,
       scale: 1,
@@ -124,7 +123,7 @@ const Home = (props: {
 
   return (
     <>
-      <Box p='20px'>
+      <Box p='20px' overflow='hidden'>
         <Box
           w='full'
           h='5vh'
@@ -132,17 +131,24 @@ const Home = (props: {
           justifyContent='space-evenly'
           alignItems='center'
           flexDir={"row"}
+          position='absolute'
+          top='0'
+          left='0'
+          zIndex='100'
         >
           <Text fontSize='2xl' align='center'>
             Pokeswipe
+          </Text>
+          <Text fontSize='2xl' align='center'>
+            <Link href='/table'>Results</Link>
           </Text>
         </Box>
         <Box
           maxW={600}
           m='auto'
           display='flex'
-          maxH='60vh'
-          mt='20vh'
+          h='justify-content'
+          mt='10vh'
           justifyContent='space-evenly'
           flexDirection='column'
         >

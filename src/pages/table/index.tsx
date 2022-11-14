@@ -1,6 +1,7 @@
 import { Text, Box, Grid, Button, useMediaQuery } from "@chakra-ui/react";
 import { prisma } from "../../server/db/client";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useAnimation } from "framer-motion";
 
 export async function getServerSideProps() {
@@ -20,9 +21,26 @@ const Table = (pokemonData: any) => {
 
   return (
     <Box h='full' m='auto' pt='10px'>
-      <Text fontSize='2xl' fontWeight='bold' textAlign='center' pb='10px'>
-        These are the user results
-      </Text>
+      <Box
+        w='full'
+        h='5vh'
+        display='flex'
+        justifyContent='space-evenly'
+        alignItems='center'
+        flexDir={"row"}
+        position='fixed'
+        top='0'
+        left='0'
+        zIndex='100'
+        bg='rgba(0,0,0,0.5)'
+      >
+        <Text fontSize='2xl' fontWeight='bold' textAlign='center' pb='10px'>
+          These are the user results
+        </Text>
+        <Text fontSize='2xl' align='center'>
+          <Link href='https://pokeswipe.vercel.app/'>Pokeswipe</Link>
+        </Text>
+      </Box>
 
       <Grid
         templateColumns={
