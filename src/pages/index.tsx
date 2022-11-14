@@ -99,6 +99,7 @@ const Home = (props: {
       });
     console.log(image);
 
+    setImage(nextRandomId);
     await sleep(700);
     animation.start({
       x: 0,
@@ -108,7 +109,6 @@ const Home = (props: {
         duration: 0,
       },
     });
-    setImage(nextRandomId);
     animation.start({
       opacity: 1,
       transition: {
@@ -195,6 +195,7 @@ const Home = (props: {
               borderRadius='40px'
             >
               <Image
+                priority
                 className='image'
                 alt={String(pokemonData.name)}
                 src={`/${image[0]}.avif`}
