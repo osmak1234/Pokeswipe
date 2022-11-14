@@ -135,6 +135,7 @@ const Home = (props: {
           top='0'
           left='0'
           zIndex='100'
+          bg='rgba(0,0,0,0.5)'
         >
           <Text fontSize='2xl' align='center'>
             Pokeswipe
