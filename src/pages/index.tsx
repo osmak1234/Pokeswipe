@@ -1,9 +1,10 @@
-import { Box, Text, useMediaQuery } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useAnimation, useDragControls } from "framer-motion";
 import { useEffect, useState } from "react";
 import { prisma } from "../server/db/client";
+import { useWindowWidth } from "@react-hook/window-size";
 
 export async function getServerSideProps() {
   const random = Math.floor(Math.random() * 809) + 1;
@@ -44,8 +45,10 @@ const Home = (props: {
   useEffect(() => {
     setPokemonData(props.wantedPokemon);
     setImage(props.nextRandomId);
-    setButtonEnabled(true);
   }, [props]);
+  //save screen width into const
+  const width = useWindowWidth();
+
   const [pokemonData, setPokemonData] = useState({
     id: 1,
     name: "Balbasaus",
@@ -54,11 +57,9 @@ const Home = (props: {
     height: 0,
     votes: 0,
   });
-  const [buttonEnabled, setButtonEnabled] = useState(false);
   const [image, setImage] = useState([1, 2, 3]);
   const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  const [screenWidth] = useMediaQuery("(min-width: 1000px)");
   async function sendVote(vote: boolean) {
     console.log(pokemonData);
     await fetch("/api/sendVote", {
@@ -81,7 +82,6 @@ const Home = (props: {
       }
     }
     const nextRandomId: any = [image[1], image[2], randomId()];
-    setImage(nextRandomId);
     // add a random number to the end of the array and remove the first one
     interface PokemonId {
       id: number;
@@ -97,17 +97,22 @@ const Home = (props: {
       .then((res) => {
         setPokemonData(res);
       });
-    setButtonEnabled(true);
     console.log(image);
 
     await sleep(700);
     animation.start({
       x: 0,
-      opacity: 1,
       scale: 1,
-      rotate: 0,
+      rotateZ: 0,
       transition: {
-        duration: 0.7,
+        duration: 0,
+      },
+    });
+    setImage(nextRandomId);
+    animation.start({
+      opacity: 1,
+      transition: {
+        duration: 0.5,
       },
     });
   }
@@ -145,33 +150,33 @@ const Home = (props: {
           <motion.div
             drag={true}
             dragConstraints={{
-              top: 4,
-              left: 70,
+              top: 1,
+              left: -70,
               right: 70,
-              bottom: 4,
+              bottom: 1,
             }}
-            dragElastic={0.3}
+            dragElastic={0.1}
             dragControls={controls}
-            onDragEnd={async (event, info) => {
-              if (info.delta.x < -1) {
+            onDragEnd={(event, info) => {
+              if (info.delta.x < -0.1) {
                 animation.start({
-                  rotate: 60,
-                  scale: 0.3,
+                  x: -width,
+                  rotateZ: 60,
                   opacity: 0,
                   transition: {
-                    duration: 0.5,
+                    duration: 0.7,
                   },
                 });
                 sendVote(false);
                 getData();
                 console.log("left");
-              } else if (info.delta.x > 1) {
+              } else if (info.delta.x > 0.1) {
                 animation.start({
-                  rotate: -60,
-                  scale: 0.3,
+                  x: width,
+                  rotateZ: -60,
                   opacity: 0,
                   transition: {
-                    duration: 0.5,
+                    duration: 0.7,
                   },
                 });
                 sendVote(true);
@@ -186,7 +191,7 @@ const Home = (props: {
               maxW={600}
               pr='50px'
               pl='50px'
-              bg='blue.400'
+              bg={`blue.500`}
               borderRadius='40px'
             >
               <Image
