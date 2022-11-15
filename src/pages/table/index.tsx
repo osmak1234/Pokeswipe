@@ -32,7 +32,7 @@ const Table = (pokemonData: any) => {
         top='0'
         left='0'
         zIndex='100'
-        bg='rgba(0,0,0,0.5)'
+        bg='rgba(15,1a,23,0.5)'
       >
         <Text fontSize='2xl' fontWeight='bold' textAlign='center' pb='10px'>
           These are the user results

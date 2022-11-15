@@ -45,9 +45,11 @@ const Home = (props: {
   useEffect(() => {
     setPokemonData(props.wantedPokemon);
     setImage(props.nextRandomId);
+    setHex(Math.floor(Math.random() * 16777215).toString(16));
   }, [props]);
   //save screen width into const
   const width = useWindowWidth();
+  const [hex, setHex] = useState("000000");
 
   const [pokemonData, setPokemonData] = useState({
     id: 1,
@@ -99,6 +101,7 @@ const Home = (props: {
       });
     console.log(image);
     await sleep(700);
+    setHex(Math.floor(Math.random() * 16777215).toString(16));
     setImage(nextRandomId);
     animation.start({
       x: 0,
@@ -120,6 +123,12 @@ const Home = (props: {
   function startDrag(event: any) {
     controls.start(event);
   }
+  function invertHex(hex: any) {
+    return (Number(`0x1${hex}`) ^ 0xffffff)
+      .toString(16)
+      .substr(1)
+      .toUpperCase();
+  }
 
   return (
     <>
@@ -135,7 +144,7 @@ const Home = (props: {
           top='0'
           left='0'
           zIndex='100'
-          bg='rgba(0,0,0,0.5)'
+          bg='rgba(15,1a,23,0.5)'
         >
           <Text fontSize='2xl' align='center'>
             Pokeswipe
@@ -198,9 +207,17 @@ const Home = (props: {
               maxW={600}
               pr='50px'
               pl='50px'
-              bg={`blue.500`}
+              bg={`#${hex}`}
               borderRadius='40px'
             >
+              <Text
+                fontWeight='bold'
+                fontSize='4xl'
+                align='center'
+                color={`#${invertHex(hex)}`}
+              >
+                {pokemonData.name}
+              </Text>
               <Image
                 priority
                 className='image'
@@ -210,33 +227,31 @@ const Home = (props: {
                 width={200}
                 height={200}
               />
-              <Text fontSize='2xl' align='center'>
-                {pokemonData.name}
-              </Text>
-              <Text fontSize='xl' align='center'>
-                {Math.round(pokemonData.weight / 10)}kg
-              </Text>
-              <Text fontSize='xl' align='center'>
-                {Math.round(pokemonData.height * 8.6)} cm
-              </Text>
             </Box>
           </motion.div>
-          <Box w='full' m='auto' display='flex' justifyContent='center'>
+          <Box
+            w='full'
+            m='auto'
+            display='flex'
+            justifyContent='center'
+            position='absolute'
+            left='-100%'
+          >
             <Image
-              width={0}
-              height={0}
+              width={1}
+              height={1}
               alt='pokemon'
               src={`/${image[0]}.avif`}
             />
             <Image
-              width={0}
-              height={0}
+              width={1}
+              height={1}
               alt='pokemon'
               src={`/${image[1]}.avif`}
             />
             <Image
-              width={0}
-              height={0}
+              width={1}
+              height={1}
               alt='pokemon'
               src={`/${image[2]}.avif`}
             />
