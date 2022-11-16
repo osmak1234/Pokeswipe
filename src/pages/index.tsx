@@ -50,6 +50,7 @@ const Home = (props: {
   //save screen width into const
   const width = useWindowWidth();
   const [hex, setHex] = useState("000000");
+  const [enableDrag, setEnableDrag] = useState(true);
 
   const [pokemonData, setPokemonData] = useState({
     id: 1,
@@ -73,6 +74,7 @@ const Home = (props: {
     });
   }
   async function getData() {
+    setEnableDrag(false);
     function randomId() {
       const Id: number = Math.floor(Math.random() * 809) + 1;
       if (Id < 10) {
@@ -103,21 +105,8 @@ const Home = (props: {
     await sleep(700);
     setHex(Math.floor(Math.random() * 16777215).toString(16));
     setImage(nextRandomId);
-    animation.start({
-      x: 0,
-      scale: 1,
-      rotateZ: 0,
-      transition: {
-        duration: 0,
-      },
-    });
-    animation.start({
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-      },
-    });
   }
+  setEnableDrag(true);
   const animation = useAnimation();
   const controls = useDragControls();
   function startDrag(event: any) {
@@ -164,7 +153,7 @@ const Home = (props: {
         >
           <div onPointerDown={startDrag} />
           <motion.div
-            drag={true}
+            drag={enableDrag}
             dragConstraints={{
               top: 1,
               left: -70,
@@ -219,6 +208,22 @@ const Home = (props: {
                 {pokemonData.name}
               </Text>
               <Image
+                onLoadingComplete={() => {
+                  animation.start({
+                    x: 0,
+                    scale: 1,
+                    rotateZ: 0,
+                    transition: {
+                      duration: 0,
+                    },
+                  });
+                  animation.start({
+                    opacity: 1,
+                    transition: {
+                      duration: 0.5,
+                    },
+                  });
+                }}
                 priority
                 className='image'
                 alt={String(pokemonData.name)}
@@ -229,34 +234,19 @@ const Home = (props: {
               />
             </Box>
           </motion.div>
-          <Box
-            w='full'
-            m='auto'
-            display='flex'
-            justifyContent='center'
-            position='absolute'
-            left='-100%'
-          >
-            <Image
-              width={1}
-              height={1}
-              alt='pokemon'
-              src={`/${image[0]}.avif`}
-            />
-            <Image
-              width={1}
-              height={1}
-              alt='pokemon'
-              src={`/${image[1]}.avif`}
-            />
-            <Image
-              width={1}
-              height={1}
-              alt='pokemon'
-              src={`/${image[2]}.avif`}
-            />
-          </Box>
         </Box>
+      </Box>
+      <Box
+        w='full'
+        m='auto'
+        display='flex'
+        justifyContent='center'
+        position='absolute'
+        left='-100%'
+      >
+        <Image width={1} height={1} alt='pokemon' src={`/${image[0]}.avif`} />
+        <Image width={1} height={1} alt='pokemon' src={`/${image[1]}.avif`} />
+        <Image width={1} height={1} alt='pokemon' src={`/${image[2]}.avif`} />
       </Box>
     </>
   );
