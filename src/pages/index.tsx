@@ -220,9 +220,6 @@ const Home = (props: {
                   </Text>
                   <Image
                     onLoadingComplete={() => {
-                      if (loading) {
-                        setLoading(false);
-                      }
                       animation.start({
                         x: 0,
                         scale: 1,
