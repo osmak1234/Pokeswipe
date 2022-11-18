@@ -177,7 +177,7 @@ const Home = (props: {
                   if (info.point.x < width / 2 - 50) {
                     animation.start({
                       x: -width,
-                      rotateZ: 60,
+                      rotateZ: -60,
                       opacity: 0,
                       transition: {
                         duration: 0.7,
@@ -189,7 +189,7 @@ const Home = (props: {
                   } else if (info.point.x > width / 2 + 50) {
                     animation.start({
                       x: width,
-                      rotateZ: -60,
+                      rotateZ: 60,
                       opacity: 0,
                       transition: {
                         duration: 0.7,
@@ -219,7 +219,8 @@ const Home = (props: {
                     {pokemonData.name}
                   </Text>
                   <Image
-                    onLoadingComplete={() => {
+                    onLoadingComplete={async () => {
+                      await sleep(300);
                       animation.start({
                         x: 0,
                         scale: 1,

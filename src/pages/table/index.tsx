@@ -85,6 +85,7 @@ const Table = (pokemonData: {
                 <Box
                   maxW='300px'
                   w='100%'
+                  h='100%'
                   maxWidth={500}
                   key={pokemon.id}
                   display='flex'
@@ -93,6 +94,7 @@ const Table = (pokemonData: {
                   border='1px solid black'
                   borderRadius='5px'
                   borderColor='whiteAlpha.700'
+                  bg='rgba(15,1a,23,1)'
                   p='10px'
                   m='auto'
                   mb='10px'
